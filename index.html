@@ -4,38 +4,36 @@
     <meta charset="UTF-8">
     <title>Dijkstra's algorithm</title>
 
-    <link rel="stylesheet" href="style/mainStyle.css">
+    <link rel="stylesheet" href="style/index.css">
+    <script src="node_modules/cytoscape/dist/cytoscape.min.js"></script>
 </head>
 <body>
     <div class="mainPage">
         <div class="top">
             <div class="headers">
                 <div class="titleHeaders">
-
                 </div>
                 <div class="descriptionHeaders">
-
                 </div>
             </div>
             <div class="navigationTop">
                 <nav class="topNav">
-
+                    <button onclick="addNodeToGraph(cy,'w')">Add Node</button>
                 </nav>
             </div>
         </div>
         <div class="graphZone">
-            <div class="leftGraphZone">
+            <div class="leftGraphZone"> <!-- Textual vision of the graph -->
 
             </div>
-            <div class="centerGraphZone">
-
+            <div class="centerGraphZone"> <!-- Visual vision of the graph -->
+                <div id="cy">
+                </div>
             </div>
-            <div class="rightGraphZone">
-
+            <div class="rightGraphZone"> <!-- Parameters -->
             </div>
             <div class="bottomGraphZone">
-                <div class="graphCalcButton">
-
+                <div class="graphCalcButton"> <!-- Start the dijkstra algorithm -->
                 </div>
             </div>
         </div>
@@ -49,5 +47,6 @@
     </div>
 
     <script src="script/scriptManager.js"></script>
+    <script src="script/cytoscapeManager.js"></script>
 </body>
 </html>
