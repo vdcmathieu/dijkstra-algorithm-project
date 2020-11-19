@@ -8,45 +8,41 @@
     <script src="node_modules/cytoscape/dist/cytoscape.min.js"></script>
 </head>
 <body>
-    <div class="mainPage">
-        <div class="top">
-            <div class="headers">
-                <div class="titleHeaders">
-                </div>
-                <div class="descriptionHeaders">
-                </div>
-            </div>
-            <div class="navigationTop">
-                <nav class="topNav">
-                    <button onclick="addNodeToGraph(cy,'w')">Add Node</button>
-                </nav>
+    <main class="content">
+        <div class="content__top">
+            <div class="primary-header__title">
+                Stigma <small> A graph theory tools for student and professor</small>
             </div>
         </div>
-        <div class="graphZone">
-            <div class="leftGraphZone"> <!-- Textual vision of the graph -->
-
-            </div>
-            <div class="centerGraphZone"> <!-- Visual vision of the graph -->
+        <div class="content__middle">
+            <div class="graph-zone"> <!-- Visual vision of the graph -->
                 <div id="cy">
                 </div>
-            </div>
-            <div class="rightGraphZone"> <!-- Parameters -->
-            </div>
-            <div class="bottomGraphZone">
-                <div class="graphCalcButton"> <!-- Start the dijkstra algorithm -->
+                <div class="button-row">
+
                 </div>
             </div>
         </div>
-        <div class="bottom">
-            <div class="navigationBottom">
-                <nav class="bottomNav">
-
-                </nav>
-            </div>
+        <div class="content__footer">
+            <nav class="primary-footer">
+                Designed by @vdcmathieu
+            </nav>
         </div>
-    </div>
+    </main>
+    <nav id="context-menu" class="context-menu">
+        <ul class="context-menu__items">
+            <li class="context-menu__item">
+                <a href="#" onclick="createNode()" class="context-menu__link" data-action="Create"><i class="fa fa-eye"></i> Create node</a>
+            </li>
+            <li class="context-menu__item">
+                <a href="#" class="context-menu__link" data-action="Edit"><i class="fa fa-edit"></i> Edit node</a>
+            </li>
+            <li class="context-menu__item">
+                <a href="#" onclick="removeNode()" class="context-menu__link" data-action="Delete"><i class="fa fa-times"></i> Delete node</a>
+            </li>
+        </ul>
+    </nav>
 
-    <script src="script/scriptManager.js"></script>
     <script src="script/cytoscapeManager.js"></script>
 </body>
 </html>
