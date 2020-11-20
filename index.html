@@ -8,37 +8,81 @@
     <script src="node_modules/cytoscape/dist/cytoscape.min.js"></script>
 </head>
 <body>
+    <!-- Page -->
+
     <main class="content">
+        <!-- Top of the page -->
         <div class="content__top">
             <div class="primary-header__title">
                 Stigma <small> A graph theory tools for student and professor</small>
             </div>
         </div>
+        <!-- Center of the page -->
         <div class="content__middle">
-            <div class="graph-zone"> <!-- Visual vision of the graph -->
-                <div id="cy">
+            <div class="graph-zone">
+                <div id="cy" class="cy"> <!-- Cytoscape zone to visualize the graph -->
                 </div>
-                <div class="button-row">
-
+                <div class="button-row"> <!-- Buttons row to act on the graph -->
+                    <div class="dropdown">
+                        <button class="dropbtn">Layout selection</button>
+                        <div class="dropdown-content">
+                            <a onclick="changeLayout()">Random</a>
+                            <a onclick="changeLayout('concentric')">Concentric</a>
+                            <a onclick="changeLayout('breadthfirst')">Breadthfirst</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- Bottom of the page -->
         <div class="content__footer">
             <nav class="primary-footer">
                 Designed by @vdcmathieu
             </nav>
         </div>
     </main>
+
+    <!--
+    Context menu when clicking background
+    -->
     <nav id="context-menu" class="context-menu">
         <ul class="context-menu__items">
             <li class="context-menu__item">
-                <a href="#" onclick="createNode()" class="context-menu__link" data-action="Create"><i class="fa fa-eye"></i> Create node</a>
+                <a href="#" onclick="createNode()" class="context-menu__link" data-action="Create">Create node</a>
             </li>
             <li class="context-menu__item">
-                <a href="#" class="context-menu__link" data-action="Edit"><i class="fa fa-edit"></i> Edit node</a>
+                <a href="#" onclick="createEdge()" class="context-menu__link" data-action="Create">Create edge</a>
             </li>
             <li class="context-menu__item">
-                <a href="#" onclick="removeNode()" class="context-menu__link" data-action="Delete"><i class="fa fa-times"></i> Delete node</a>
+                <a href="#" onclick="clearCy()" class="context-menu__link" data-action="Clear">Clear canvas</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!--
+    Context menu when clicking Node
+    -->
+    <nav id="context-menu-node" class="context-menu-node">
+        <ul class="context-menu-node__items">
+            <li class="context-menu-node__item">
+                <a href="#" onclick="renameNode()" class="context-menu__link" data-action="Create">Rename node</a>
+            </li>
+            <li class="context-menu-node__item">
+                <a href="#" onclick="removeNode()" class="context-menu__link" data-action="Edit">Delete node</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!--
+    Context menu when clicking edge
+    -->
+    <nav id="context-menu-edge" class="context-menu-edge">
+        <ul class="context-menu-edge__items">
+            <li class="context-menu-edge__item">
+                <a href="#" onclick="" class="context-menu__link" data-action="Create">Edit edge value</a>
+            </li>
+            <li class="context-menu-edge__item">
+                <a href="#" onclick="removeEdge()" class="context-menu__link" data-action="Edit">Delete edge</a>
             </li>
         </ul>
     </nav>

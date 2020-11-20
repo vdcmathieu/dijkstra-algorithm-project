@@ -76,7 +76,7 @@ body {
 
 /* context menu */
 
-.context-menu {
+.context-menu, .context-menu-edge, .context-menu-node {
     display: none;
     position: absolute;
     z-index: 10;
@@ -87,33 +87,78 @@ body {
     box-shadow: 1px 1px 2px #cfcfcf;
 }
 
-.context-menu--active {
+.context-menu--active, .context-menu-edge--active, .context-menu-node--active {
     display: block;
 }
 
-.context-menu__items {
+.context-menu__items, .context-menu-edge__items, .context-menu-node__items {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.context-menu__item {
+.context-menu__item, .context-menu-edge__item, .context-menu-node__item {
     display: block;
     margin-bottom: 4px;
 }
 
-.context-menu__item:last-child {
+.context-menu__item:last-child, .context-menu-edge__item:last-child, .context-menu-node__item:last-child {
     margin-bottom: 0;
 }
 
-.context-menu__link {
+.context-menu__link, .context-menu-edge__link, .context-menu-node__link {
     display: block;
     padding: 4px 12px;
     color: #0066aa;
     text-decoration: none;
 }
 
-.context-menu__link:hover {
+.context-menu__link:hover, .context-menu-edge__link:hover, .context-menu-node__link:hover {
     color: #fff;
     background-color: #0066aa;
+}
+
+/*
+Dropdown Style
+*/
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    cursor: pointer;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
 }
