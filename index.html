@@ -29,6 +29,38 @@
                             <a onclick="changeLayout()">Random</a>
                             <a onclick="changeLayout('concentric')">Concentric</a>
                             <a onclick="changeLayout('breadthfirst')">Breadthfirst</a>
+                            <a onclick="changeLayout('grid')">Grid</a>
+                            <a onclick="changeLayout('circle')">Circle</a>
+                            <a onclick="changeLayout('cose')">Cose</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Algorithm</button>
+                        <div class="dropdown-content">
+                            <a onclick="dfs()">DFS</a>
+                            <a onclick="bfs()">BFS</a>
+                            <a onclick="dijkstra()">Dijkstra</a>
+                            <a onclick="aStar()">A*</a>
+                            <a onclick="floydWarshall()">Floyd-Warshall </a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Import</button>
+                        <div class="dropdown-content">
+                            <input type="file" id="graph-file" accept=".json">
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Export Graph</button>
+                        <div class="dropdown-content">
+                            <a onclick="downloadJson()">As JSON</a>
+                            <a onclick="downloadImage()">As PNG</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Export animation</button>
+                        <div class="dropdown-content">
+                            <a onclick="">As GIF</a>
                         </div>
                     </div>
                 </div>
@@ -65,7 +97,7 @@
     <nav id="context-menu-node" class="context-menu-node">
         <ul class="context-menu-node__items">
             <li class="context-menu-node__item">
-                <a href="#" onclick="renameNode()" class="context-menu__link" data-action="Create">Rename node</a>
+                <a href="#" onclick="changeNodeLabel()" class="context-menu__link" data-action="Create">Rename node</a>
             </li>
             <li class="context-menu-node__item">
                 <a href="#" onclick="removeNode()" class="context-menu__link" data-action="Edit">Delete node</a>
@@ -79,7 +111,7 @@
     <nav id="context-menu-edge" class="context-menu-edge">
         <ul class="context-menu-edge__items">
             <li class="context-menu-edge__item">
-                <a href="#" onclick="" class="context-menu__link" data-action="Create">Edit edge value</a>
+                <a href="#" onclick="changeEdgeValue()" class="context-menu__link" data-action="Create">Edit edge value</a>
             </li>
             <li class="context-menu-edge__item">
                 <a href="#" onclick="removeEdge()" class="context-menu__link" data-action="Edit">Delete edge</a>

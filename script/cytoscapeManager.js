@@ -45,52 +45,60 @@ var currentNode;
 var currentEdge;
 
 var cy = cytoscape({
+    container: document.getElementById('cy'),
 
-    container: document.getElementById('cy'), // container to render in
+    boxSelectionEnabled: false,
+    autounselectify: true,
 
-    elements: [ // list of graph elements to start with
-        { // node a
-            data: { id: 'a' }
-        },
-        { // node b
-            data: { id: 'b' }
-        },
-        { // node c
-            data: { id: 'c' }
-        },
-        { // node d
-            data: { id: 'd' }
-        },
-        { // edge ab
-            data: { id: 'ab', source: 'a', target: 'b' }
-        }
-    ],
+    style: cytoscape.stylesheet()
+        .selector('node')
+        .style({
+            'content': 'data(id)'
+        })
+        .selector('edge')
+        .style({
+            'curve-style': 'bezier',
+            'target-arrow-shape': 'triangle',
+            'width': 4,
+            'line-color': '#ddd',
+            'target-arrow-color': '#ddd',
+            'label': 'data(weight)'
+        })
+        .selector('.highlighted')
+        .style({
+            'background-color': '#61bffc',
+            'line-color': '#61bffc',
+            'target-arrow-color': '#61bffc',
+            'transition-property': 'background-color, line-color, target-arrow-color',
+            'transition-duration': '0.5s'
+        }),
 
-    style: [ // the stylesheet for the graph
-        {
-            selector: 'node',
-            style: {
-                'background-color': '#0B9ED9',
-                'label': 'data(id)'
-            }
-        },
+    elements: {
+        nodes: [
+            { data: { id: 'a' } },
+            { data: { id: 'b' } },
+            { data: { id: 'c' } },
+            { data: { id: 'd' } },
+            { data: { id: 'e' } }
+        ],
 
-        {
-            selector: 'edge',
-            style: {
-                'width': 3,
-                'line-color': '#021859',
-                'target-arrow-color': '#021859',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier'
-            }
-        }
-    ],
+        edges: [
+            { data: { id: 'ae_0', weight: 1, source: 'a', target: 'e' } },
+            { data: { id: 'ab_0', weight: 3, source: 'a', target: 'b' } },
+            { data: { id: 'be_0', weight: 4, source: 'b', target: 'e' } },
+            { data: { id: 'bc_0', weight: 5, source: 'b', target: 'c' } },
+            { data: { id: 'ce_0', weight: 6, source: 'c', target: 'e' } },
+            { data: { id: 'cd_0', weight: 2, source: 'c', target: 'd' } },
+            { data: { id: 'de_0', weight: 7, source: 'd', target: 'e' } }
+        ]
+    },
 
     layout: {
-        name: 'random'
+        name: 'breadthfirst',
+        directed: true,
+        roots: '#a',
+        padding: 10
     }
-
 });
 
 /*
@@ -100,8 +108,9 @@ var cy = cytoscape({
 /*
 * Function to create a Node when the 'Create node' item is clicked in the menu.
 * */
-function createNode() {
-    var id = 'new' + Math.round( Math.random() * 100 );
+function createNode(id) {
+    removeHighlight()
+    id = id || 'new' + Math.round( Math.random() * 100 );
     cy.add({
         classes: 'node',
         data: { id:  id},
@@ -113,15 +122,26 @@ function createNode() {
     console.log(`Node created. Id: ${id}`);
 }
 
-function createEdge() {
-    var nodeId_1 = prompt('First node Id');
-    var nodeId_2 = prompt('Second node Id');
-    var nodeValue = prompt('Edge id');
+function createEdge(sourceNode, targetNode, edgeWeight) {
+    removeHighlight()
+    var id;
+
+    sourceNode = sourceNode || prompt('First node Id');
+    targetNode = targetNode || prompt('Target node Id');
+    edgeWeight = edgeWeight || prompt('Edge value')
+
+    var sameEdges = cy.edges().filter(function( ele ){
+        return ele.data('source') === sourceNode & ele.data('target') === targetNode;
+    });
+    if (sameEdges.length !== 0) {
+        id = parseInt(sameEdges[sameEdges.length - 1].data('id').slice(sameEdges[sameEdges.length - 1].data('id').indexOf("_")+1)) + 1;
+    }
+
     cy.add({
         classes: 'edge',
-        data: { id: nodeValue, source: nodeId_1, target: nodeId_2},
+        data: { id: `${sourceNode}${targetNode}_${id}`, source: sourceNode, target: targetNode, weight: edgeWeight},
     });
-    console.log(`Edge created. Id: ${nodeValue}`);
+    console.log(`Edge created. Id: ${sourceNode}${targetNode}_${id}`);
 }
 
 function removeNode() {
@@ -134,17 +154,166 @@ function removeEdge() {
     console.log(`Edge removed`);
 }
 
-function renameNode() {
-    currentNode.data('id',prompt('Enter new value'));
+function changeEdgeValue(newValue) {
+    newValue = newValue || prompt('Enter new value')
+    currentEdge.data('value', newValue)
+    console.log(`Edge value changed to ${newValue}`)
 }
 
-function changeEdgeValue() {
-
+function changeNodeLabel(newLabel) {
+    newLabel = newLabel || prompt('Enter new label')
+    currentNode.data('id', newLabel)
+    console.log(`Node label changed to ${newLabel}`)
 }
 
 function clearCy() {
 
 }
+
+function removeHighlight() {
+    cy.elements().removeClass('highlighted')
+}
+
+function highlightNextEle(elements) {
+
+    var i = 0;
+
+    if( i < elements.path.length ){
+        elements.path[i].addClass('highlighted');
+
+        i++;
+        setTimeout( highlightNextEle(elements), 250);
+    }
+}
+
+function bfs(beginningNode) {
+    removeHighlight()
+    beginningNode = beginningNode || prompt("Enter beginning node")
+
+    var bfs = cy.elements().bfs(`#${beginningNode}`, function(){}, true);
+
+    highlightNextEle(bfs);
+}
+
+function dfs(beginningNode) {
+    removeHighlight()
+    beginningNode = beginningNode || prompt("Enter beginning node")
+
+    var dfs = cy.elements().dfs(`#${beginningNode}`, function(){}, true);
+
+    var i = 0;
+    var highlightNextEle = function(){
+        if( i < dfs.path.length ){
+            dfs.path[i].addClass('highlighted');
+
+            i++;
+            setTimeout(highlightNextEle, 250);
+        }
+    };
+
+    // kick off first highlight
+    highlightNextEle();
+}
+
+function dijkstra(beginningNode, endNode){
+    removeHighlight()
+    beginningNode = beginningNode || prompt("Enter beginning node")
+    endNode = endNode || prompt("Enter end node")
+
+    var dijkstra = cy.elements().dijkstra(`#${beginningNode}`, function(edge){
+        return edge.data('weight');
+    }, true).pathTo(cy.$(`#${endNode}`));
+
+    var i = 0;
+    var highlightNextEle = function(){
+        if( i < dijkstra.length ){
+            dijkstra[i].addClass('highlighted');
+
+            i++;
+            setTimeout(highlightNextEle, 250);
+        }
+    };
+
+    // kick off first highlight
+    highlightNextEle();
+}
+
+function aStar(beginningNode, endNode){
+    removeHighlight()
+    beginningNode = beginningNode || prompt("Enter beginning node")
+    endNode = endNode || prompt("Enter end node")
+
+    var aStar = cy.elements().aStar(`#${beginningNode}`, `#${endNode}`, function(){}, true);
+
+    var i = 0;
+    var highlightNextEle = function(){
+        if( i < aStar.path.length ){
+            aStar.path[i].addClass('highlighted');
+
+            i++;
+            setTimeout(highlightNextEle, 250);
+        }
+    };
+
+    // kick off first highlight
+    highlightNextEle();
+}
+
+function floydWarshall(beginningNode, endNode){
+    removeHighlight()
+    beginningNode = beginningNode || prompt("Enter beginning node")
+    endNode = endNode || prompt("Enter end node")
+
+    var floydWarshall = cy.elements().floydWarshall(function(){}, true).path(`#${beginningNode}`, `#${endNode}`);
+    console.log(floydWarshall)
+
+    var i = 0;
+    var highlightNextEle = function(){
+        if( i < floydWarshall.length ){
+            floydWarshall[i].addClass('highlighted');
+
+            i++;
+            setTimeout(highlightNextEle, 250);
+        }
+    };
+
+    // kick off first highlight
+    highlightNextEle();
+}
+
+function downloadJson(){
+    var graph = cy
+    if (graph !== null) {
+        document.getElementById('graph-json-content').innerHTML = JSON.stringify(graph.json(), null, 4);
+        var text = document.getElementById("graph-json-content").value;
+        text = text.replace(/\n/g, "\r\n"); // To retain the Line breaks.
+        var blob = new Blob([text], { type: "text/plain"});
+        var anchor = document.createElement("a");
+        anchor.download = "my_graph.json";
+        anchor.href = window.URL.createObjectURL(blob);
+        anchor.target ="_blank";
+        anchor.style.display = "none"; // just to be safe!
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    }
+}
+
+function downloadImage(){
+    if (cy !== null) {
+        var png = cy.png({'output': 'blob'});
+        var blob = new Blob([png], {type: 'image/png'});
+        var anchor = document.createElement("a");
+        anchor.download = "my_graph.png";
+        anchor.href = window.URL.createObjectURL(blob);
+        anchor.target ="_blank";
+        anchor.style.display = "none"; // just to be safe!
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    }
+}
+
 
 /**
  * Define new Cy layout
@@ -152,17 +321,16 @@ function clearCy() {
  * @param {string} name Layout name
  * */
 function changeLayout(name) {
-    if (!name) {
-        var layout = cy.layout({
-            name: 'random'
-        });
-        layout.run();
-    } else {
-        var layout = cy.layout({
-            name: name
-        });
-        layout.run();
-    }
+    name = name || 'random'
+    var layout = cy.layout({
+        name: name,
+        animate: true,
+        animationDuration: 500,
+        animationThreshold: 250,
+        refresh: 20,
+        fit: true
+    });
+    layout.run();
 }
 
 
@@ -262,6 +430,55 @@ function changeLayout(name) {
                 toggleMenuOff('all');
                 toggleMenuOn('edge');
                 positionMenu(evt, 'edge');
+            });
+
+            cy.$('node').on('grab', function (e) {
+                var ele = e.target;
+                ele.connectedEdges().style({ 'line-color': 'red', 'target-arrow-color': 'red' });
+            });
+
+
+            cy.$('node').on('free', function (e) {
+                var ele = e.target;
+                ele.connectedEdges().style({ 'line-color': '#ddd', 'target-arrow-color': '#ddd' });
+            });
+
+            document.getElementById('graph-file').addEventListener('change', function (event) {
+
+                var reader = new FileReader();
+                reader.onload = function(event) {
+
+                    var graph_definition;
+                    graph_definition = JSON.parse(event.target.result);
+
+                    document.getElementById('cy').innerHTML = ""
+                    if (cy !== null) {
+                        cy.destroy();
+                    };
+
+                    cy = cytoscape({
+                        container: document.getElementById('cy'),
+                        elements: graph_definition['elements'],
+                        style: graph_definition['style'],
+                        // Draw nodes at given positions
+                        layout: {
+                            name: 'preset',
+                            fit: true
+                        }
+
+                    });
+
+                    cy.fit();
+
+                }
+
+                const files = event.target.files;
+                if (files.length <= 0) {
+                    return false;
+                }
+
+                reader.readAsText(files.item(0));
+
             });
         });
     }
