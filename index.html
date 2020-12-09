@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="style/index.css">
     <script src="script/cytoscape.min.js"></script>
+    <script src="gif.js-master/dist/gif.js"></script>
 </head>
 <body>
     <!-- Page -->
@@ -23,44 +24,48 @@
                 <div id="cy" class="cy"> <!-- Cytoscape zone to visualize the graph -->
                 </div>
                 <div class="button-row"> <!-- Buttons row to act on the graph -->
-                    <div class="dropdown">
-                        <button class="dropbtn">Layout selection</button>
-                        <div class="dropdown-content">
-                            <a onclick="changeLayout()">Random</a>
-                            <a onclick="changeLayout('concentric')">Concentric</a>
-                            <a onclick="changeLayout('breadthfirst')">Breadthfirst</a>
-                            <a onclick="changeLayout('grid')">Grid</a>
-                            <a onclick="changeLayout('circle')">Circle</a>
-                            <a onclick="changeLayout('cose')">Cose</a>
+                    <div class="button-row-right">
+                        <div class="dropdown">
+                            <button class="dropbtn">Layout selection</button>
+                            <div class="dropdown-content">
+                                <a onclick="changeLayout()">Random</a>
+                                <a onclick="changeLayout('concentric')">Concentric</a>
+                                <a onclick="changeLayout('breadthfirst')">Breadthfirst</a>
+                                <a onclick="changeLayout('grid')">Grid</a>
+                                <a onclick="changeLayout('circle')">Circle</a>
+                                <a onclick="changeLayout('cose')">Cose</a>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">Algorithm</button>
+                            <div class="dropdown-content">
+                                <a onclick="dfs()">DFS</a>
+                                <a onclick="bfs()">BFS</a>
+                                <a onclick="dijkstra()">Dijkstra</a>
+                                <a onclick="aStar()">A*</a>
+                                <a onclick="floydWarshall()">Floyd-Warshall </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Algorithm</button>
-                        <div class="dropdown-content">
-                            <a onclick="dfs()">DFS</a>
-                            <a onclick="bfs()">BFS</a>
-                            <a onclick="dijkstra()">Dijkstra</a>
-                            <a onclick="aStar()">A*</a>
-                            <a onclick="floydWarshall()">Floyd-Warshall </a>
+                    <div class="button-row-left">
+                        <div class="dropdown">
+                            <button class="dropbtn">Import</button>
+                            <div class="dropdown-content">
+                                <input type="file" id="graph-file" accept=".json">
+                            </div>
                         </div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Import</button>
-                        <div class="dropdown-content">
-                            <input type="file" id="graph-file" accept=".json">
+                        <div class="dropdown">
+                            <button class="dropbtn">Export Graph</button>
+                            <div class="dropdown-content">
+                                <a onclick="downloadJson()">As JSON</a>
+                                <a onclick="downloadImage()">As PNG</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Export Graph</button>
-                        <div class="dropdown-content">
-                            <a onclick="downloadJson()">As JSON</a>
-                            <a onclick="downloadImage()">As PNG</a>
-                        </div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Export animation</button>
-                        <div class="dropdown-content">
-                            <a onclick="">As GIF</a>
+                        <div class="dropdown">
+                            <button class="dropbtn">Export animation</button>
+                            <div class="dropdown-content">
+                                <a onclick="exportAnimation()">As GIF</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -118,6 +123,8 @@
             </li>
         </ul>
     </nav>
+
+    <textarea id="graph-json-content" style="visibility:hidden;"></textarea>
 
     <script src="script/cytoscapeManager.js"></script>
 </body>

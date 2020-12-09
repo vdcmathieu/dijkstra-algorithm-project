@@ -18,7 +18,7 @@ body {
     border-radius: 0.1em;
     padding: 1em;
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
@@ -44,6 +44,14 @@ body {
     margin: 5px;
 }
 
+.button-row-right {
+    float: right;
+}
+
+.button-row-left {
+    float: left;
+}
+
 /*
 Primary header
 */
@@ -67,8 +75,13 @@ Primary header
 /* content */
 
 .content__footer {
-    margin-top: 12px;
+    position: absolute;
+    bottom: 0;
+    height: 0rem;
     text-align: center;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
 }
 
 /* footer */

@@ -44,6 +44,8 @@ var windowHeight;
 var currentNode;
 var currentEdge;
 
+var lastAlgorithm;
+
 var cytoscapeDefault = {
     container: document.getElementById('cy'),
 
@@ -53,7 +55,8 @@ var cytoscapeDefault = {
     style: cytoscape.stylesheet()
         .selector('node')
         .style({
-            'content': 'data(id)'
+            'content': 'data(id)',
+            'background-color': `#727171`,
         })
         .selector('edge')
         .style({
@@ -206,18 +209,20 @@ function bfs(beginningNode) {
     var bfs = cy.elements().bfs(`#${beginningNode}`, function(){}, true);
 
     highlightNextEle(bfs);
+    lastAlgorithm = 'bfs';
+    return bfs
 }
 
 function dfs(beginningNode) {
     removeHighlight()
     beginningNode = beginningNode || prompt("Enter beginning node")
 
-    var dfs = cy.elements().dfs(`#${beginningNode}`, function(){}, true);
+    var dfs = cy.elements().dfs(`#${beginningNode}`, function(){}, true).path;
 
     var i = 0;
     var highlightNextEle = function(){
-        if( i < dfs.path.length ){
-            dfs.path[i].addClass('highlighted');
+        if( i < dfs.length ){
+            dfs[i].addClass('highlighted');
 
             i++;
             setTimeout(highlightNextEle, 250);
@@ -226,6 +231,8 @@ function dfs(beginningNode) {
 
     // kick off first highlight
     highlightNextEle();
+    lastAlgorithm = 'dfs';
+    return dfs
 }
 
 function dijkstra(beginningNode, endNode){
@@ -249,6 +256,8 @@ function dijkstra(beginningNode, endNode){
 
     // kick off first highlight
     highlightNextEle();
+    lastAlgorithm = 'dijkstra';
+    return dijkstra
 }
 
 function aStar(beginningNode, endNode){
@@ -270,6 +279,8 @@ function aStar(beginningNode, endNode){
 
     // kick off first highlight
     highlightNextEle();
+    lastAlgorithm = 'aStar';
+    return aStar
 }
 
 function floydWarshall(beginningNode, endNode){
@@ -292,6 +303,8 @@ function floydWarshall(beginningNode, endNode){
 
     // kick off first highlight
     highlightNextEle();
+    lastAlgorithm = 'floydWarshall';
+    return floydWarshall
 }
 
 function downloadJson(){
@@ -325,6 +338,36 @@ function downloadImage(){
         anchor.click();
         document.body.removeChild(anchor);
     }
+}
+
+function exportAnimation() {
+    var algorithm;
+    switch (lastAlgorithm){
+        case 'bfs': algorithm = bfs();
+        case 'dfs': algorithm = dfs();
+    }
+    var gif = new GIF({
+        workers: 2,
+        quality: 10
+    });
+
+    var i = 0;
+    var whileElementExport = function(){
+        if( i < algorithm.length ){
+            algorithm[i].addClass('highlighted');
+            var png = cy.png({'output': 'blob'});
+            var blob = new Blob([png], {type: 'image/png'});
+            gif.addFrame(blob);
+            i++;
+            whileElementExport();
+        }
+    };
+
+    whileElementExport();
+    gif.on('finished', function(blob) {
+        window.open(URL.createObjectURL(blob));
+    });
+    gif.render();
 }
 
 
@@ -413,6 +456,7 @@ function changeLayout(name) {
         clickListener();
         keyupListener();
         resizeListener();
+        console.log('Init done')
     }
 
     /**
@@ -423,7 +467,6 @@ function changeLayout(name) {
         document.addEventListener('DOMContentLoaded', function(){
 
             cy.on('cxttap', function( evt ){ //when right clicking cy background
-                var tgt = evt.target || evt.cyTarget;
                 evt.preventDefault();
                 toggleMenuOff('all');
                 toggleMenuOn('basic');
@@ -446,15 +489,17 @@ function changeLayout(name) {
                 positionMenu(evt, 'edge');
             });
 
-            cy.$('node').on('grab', function (e) {
-                var ele = e.target;
-                ele.connectedEdges().style({ 'line-color': 'red', 'target-arrow-color': 'red' });
+            cy.$('node').on('grab', function (evt) {
+                currentNode = evt.target || evt.cyTarget;
+                currentNode.style({'background-color': '#7D07F2'});
+                currentNode.connectedEdges(`edge[source = "${currentNode._private.data.id}"]`).style({ 'line-color': '#7D07F2', 'target-arrow-color': '#7D07F2' });
+                currentNode.connectedEdges(`edge[target = "${currentNode._private.data.id}"]`).style({ 'line-color': '#23D9B7', 'target-arrow-color': '#23D9B7' });
             });
 
-
-            cy.$('node').on('free', function (e) {
-                var ele = e.target;
-                ele.connectedEdges().style({ 'line-color': '#ddd', 'target-arrow-color': '#ddd' });
+            cy.$('node').on('free', function (evt) {
+                currentNode = evt.target || evt.cyTarget;
+                currentNode.style({'background-color': '#727171'});
+                currentNode.connectedEdges().style({ 'line-color': '#ddd', 'target-arrow-color': '#ddd' });
             });
 
             document.getElementById('graph-file').addEventListener('change', function (event) {
@@ -474,14 +519,15 @@ function changeLayout(name) {
 
                     cy = cytoscape({
                         container: cytoscapeDefault.container,
+                        boxSelectionEnabled: cytoscapeDefault.boxSelectionEnabled,
+                        autounselectify: cytoscapeDefault.autounselectify,
                         elements: graph_definition['elements'],
                         style: cytoscapeDefault.style,
                         // Draw nodes at given positions
                         layout: cytoscapeDefault.layout
                     });
-                    changeLayout('breadthfirst')
+                    changeLayout('breadthfirst');
                     cy.fit();
-
                 }
 
                 const files = event.target.files;
@@ -490,7 +536,7 @@ function changeLayout(name) {
                 }
 
                 reader.readAsText(files.item(0));
-
+                init();
             });
         });
     }
