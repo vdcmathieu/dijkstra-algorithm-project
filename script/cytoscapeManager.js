@@ -44,7 +44,7 @@ var windowHeight;
 var currentNode;
 var currentEdge;
 
-var cy = cytoscape({
+var cytoscapeDefault = {
     container: document.getElementById('cy'),
 
     boxSelectionEnabled: false,
@@ -99,6 +99,19 @@ var cy = cytoscape({
         roots: '#a',
         padding: 10
     }
+}
+
+var cy = cytoscape({
+    container: cytoscapeDefault.container,
+
+    boxSelectionEnabled: cytoscapeDefault.boxSelectionEnabled,
+    autounselectify: cytoscapeDefault.autounselectify,
+
+    style: cytoscapeDefault.style,
+
+    elements: cytoscapeDefault.elements,
+
+    layout: cytoscapeDefault.layout
 });
 
 /*
@@ -156,7 +169,7 @@ function removeEdge() {
 
 function changeEdgeValue(newValue) {
     newValue = newValue || prompt('Enter new value')
-    currentEdge.data('value', newValue)
+    currentEdge.data('weight', newValue)
     console.log(`Edge value changed to ${newValue}`)
 }
 
@@ -406,6 +419,7 @@ function changeLayout(name) {
      * Listens for contextmenu events.
      */
     function contextListener() {
+        window.addEventListener("contextmenu", e => e.preventDefault());
         document.addEventListener('DOMContentLoaded', function(){
 
             cy.on('cxttap', function( evt ){ //when right clicking cy background
@@ -446,10 +460,12 @@ function changeLayout(name) {
             document.getElementById('graph-file').addEventListener('change', function (event) {
 
                 var reader = new FileReader();
+                console.log(`file loaded`);
                 reader.onload = function(event) {
 
                     var graph_definition;
-                    graph_definition = JSON.parse(event.target.result);
+                    const {result} = event.target;
+                    graph_definition = JSON.parse(result);
 
                     document.getElementById('cy').innerHTML = ""
                     if (cy !== null) {
@@ -457,17 +473,13 @@ function changeLayout(name) {
                     };
 
                     cy = cytoscape({
-                        container: document.getElementById('cy'),
+                        container: cytoscapeDefault.container,
                         elements: graph_definition['elements'],
-                        style: graph_definition['style'],
+                        style: cytoscapeDefault.style,
                         // Draw nodes at given positions
-                        layout: {
-                            name: 'preset',
-                            fit: true
-                        }
-
+                        layout: cytoscapeDefault.layout
                     });
-
+                    changeLayout('breadthfirst')
                     cy.fit();
 
                 }
