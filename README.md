@@ -1,8 +1,16 @@
-# Dijkstra's algorithm
+# Stigma
 
-The Dijkstra's algorithm is an algorithm used in graph theory to find the shortest path from a node to another. It is notably use in the industry to calculate fastest route (Google Maps, Waze...) or to solve complex situation.
+Stigma is a webapp developed for students and professors who wish to construct graph.
+Create, modify and export graph easily with a clean GUI directly from the web. Stigma allows you to completely take control over your graph, run multiple algorithm on them and show off in front of your pairs !
 
-The goal of this project is to provide student with an online tool to graphicaly create graph, and - using the Dijkstra's algorithm - find the fasted way from a node to another. Then provide the user with an animated image of the process. 
+Stigma is based on Cytoscape JS technology.
+
+## Try out Stigma
+
+You can try Stigma on GitHub Paper :
+
+### [Stigma](https://vdcmathieu.github.io/stigma/)
+
 
 ## Author
 
